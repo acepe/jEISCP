@@ -17,22 +17,16 @@ import org.apache.commons.logging.LogFactory;
 import de.csmp.jeiscp.eiscp.EiscpCommandsParser;
 
 public class EiscpConnector {
-	
-
 	private static final Log log = LogFactory.getLog(EiscpConnector.class);
-
 	
-	Socket socket;
-	BufferedOutputStream socketOut;
-	BufferedInputStream socketIn;
+	private Socket socket;
+	private BufferedOutputStream socketOut;
+	private BufferedInputStream socketIn;
 	
-	
-	EiscpConnectorSocketReaderThread t = null;
-	Thread lt = null;
+	private EiscpConnectorSocketReaderThread t = null;
+	private Thread lt = null;
 	
 	boolean closed = false;
-	
-	
 	
 	public static EiscpConnector autodiscover() throws Exception {
 		String queryDatagramString = EiscpConstants.AUTODISCOVER_QSTN;
@@ -56,7 +50,7 @@ public class EiscpConnector {
 		do {
 			try {
 				log.info("wait for autodiscover answere");
-				return receiveAutodiscoverAnswere(datagramSocket);	
+				return receiveAutodiscoverAnswere(datagramSocket);
 			} catch (Exception ex) {
 				log.warn(ex);
 			}
@@ -78,9 +72,9 @@ public class EiscpConnector {
 		String responseString = EiscpProtocolHelper.interpreteEiscpResponse(receivedMessage);
 		String address = pct.getAddress().getHostAddress().toString();
 		EiscpConnector conn = new EiscpConnector(address, responseString);
+		
 		return conn;
 	}
-
 
 	public EiscpConnector(String address, String autodiscoverResponse) throws UnknownHostException, IOException {
 		// TODO parse
@@ -106,10 +100,6 @@ public class EiscpConnector {
 		}
 	}
 	
-	
-	
-	
-	
 	private void init(String address, int port) throws UnknownHostException, IOException {
 		log.debug("connect to " + address + ":" + port);
 		
@@ -125,7 +115,6 @@ public class EiscpConnector {
 		if (! closed) close();
 		super.finalize();
 	}
-
 	
 	public int available() throws IOException {
 		return socketIn.available();
@@ -142,21 +131,18 @@ public class EiscpConnector {
 		return res;
 	}
 	
-	
 	public void sendIscpCommand(String command) throws IOException {
 		log.debug("sendIscpCommand: " + command);
 		String message = "!1" + command;
 		
 		sendIscpMessage(message);
 	}
-	
 
 	public void sendCommand(String commandId) throws IOException {
 		log.debug("sendCommand: " + commandId);
 		String iscpCommand = EiscpCommandsParser.getIscpCommand(commandId);
 		sendIscpCommand(iscpCommand);
 	}
-	
 	
 	public void sendIscpMessage(String message) throws IOException {
 		byte[] eiscpMessage = EiscpProtocolHelper.iscpToEiscpMessage(message);
@@ -169,7 +155,19 @@ public class EiscpConnector {
 		socketOut.flush();
 	}
 
-
+	public String responseIscpMessage(String message) throws Exception {
+		String result = null;
+		
+		this.sendIscpMessage(message);
+		
+		byte[] response =  this.readMessage();
+		
+		if (response != null) {
+			result = EiscpProtocolHelper.interpreteEiscpResponse(response);
+		}
+		
+		return result;
+	}
 
 	public void close() {
 		log.debug("-- close");
@@ -189,6 +187,4 @@ public class EiscpConnector {
 		
 		closed = true;
 	}
-	
-	
 }

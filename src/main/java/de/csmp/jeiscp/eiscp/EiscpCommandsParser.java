@@ -44,7 +44,7 @@ public class EiscpCommandsParser {
 	private static Map<String, List<String>> keysetForModel = new HashMap<String, List<String>>();
 	
 	
-	public static final Command MASTER_VOLUME_QUERY_CMD = getCommand(MASTER_VOLUME_QUERY);
+	public static Command MASTER_VOLUME_QUERY_CMD;// = getCommand(MASTER_VOLUME_QUERY);
 	
 
 	public static Map<String, Command> getIscpToCommandMap() {
