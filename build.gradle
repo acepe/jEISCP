@@ -1,0 +1,25 @@
+apply plugin: 'java'
+apply plugin: 'eclipse'
+
+// The Maven plugin is only required if your package is used as a library.
+apply plugin: 'maven'
+
+version = '1.0-SNAPSHOT'
+group = 'de.csmp'
+
+defaultTasks 'build', 'eclipse'
+
+sourceCompatibility = 1.7
+targetCompatibility = 1.7
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	testCompile 'junit:junit:4.11'
+	compile 'commons-logging:commons-logging:1.1.1'	
+	compile 'org.apache.commons:commons-lang3:3.1'
+	compile 'log4j:log4j:1.2.17'
+	compile 'org.yaml:snakeyaml:1.12'
+}
