@@ -7,8 +7,6 @@ import java.io.IOException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import static de.csmp.jeiscp.EiscpConstants.*;
-
 
 public class EiscpConnectorSocketReaderThread implements Runnable {
 	private static final Log log = LogFactory.getLog(EiscpConnectorSocketReaderThread.class);

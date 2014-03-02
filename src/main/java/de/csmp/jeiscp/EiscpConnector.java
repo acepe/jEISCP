@@ -160,6 +160,8 @@ public class EiscpConnector {
 		
 		this.sendIscpMessage(message);
 		
+		Thread.sleep(200);
+		
 		byte[] response =  this.readMessage();
 		
 		if (response != null) {
@@ -186,5 +188,13 @@ public class EiscpConnector {
 		} catch (Exception ex) {}
 		
 		closed = true;
+	}
+	
+	public boolean isConnected() {
+		return this.socket.isConnected();
+	}
+	
+	public boolean isClosed() {
+		return this.socket.isClosed();
 	}
 }
