@@ -1,0 +1,240 @@
+.root {
+    -fx-background: white;
+    -fx-background-color: white;
+}
+
+.spaced {
+    -fx-spacing: 10;
+}
+
+.small-spaced {
+    -fx-spacing: 4;
+}
+
+.bordered {
+    -fx-padding: 6;
+}
+
+.content-pane{
+   -fx-padding: 8;
+   -fx-spacing: 10;
+}
+
+.grid {
+    -fx-hgap: 8;
+    -fx-vgap: 1;
+}
+
+.text-highlight{
+    -fx-background-color: #88A6E8;
+}
+
+#list-file-icon-label> .glyph-icon {
+    -fx-fill: rgba(0,0,0,0.4);
+}
+
+#list-excel-icon-label> .glyph-icon {
+    -fx-fill: #00C000;
+}
+
+#list-onenote-icon-label> .glyph-icon {
+    -fx-fill: #6F20A3;
+}
+
+#list-word-icon-label> .glyph-icon {
+    -fx-fill: #0000FF;
+}
+
+#list-text-icon-label> .glyph-icon {
+    -fx-fill: black;
+}
+
+#list-image-icon-label> .glyph-icon {
+    -fx-fill: #CD1BD3;
+}
+
+#list-video-icon-label> .glyph-icon {
+    -fx-fill: #08E11A;
+}
+
+#list-pdf-icon-label> .glyph-icon {
+    -fx-fill: #D30000;
+}
+
+#list-folder-icon-label> .glyph-icon {
+    -fx-fill: #FFD560;
+}
+
+#list-mail-icon-label> .glyph-icon {
+   -fx-fill: #FFDD41;
+}
+
+#list-powerpoint-icon-label> .glyph-icon {
+   -fx-fill: #DA3B01;
+}
+
+#list-archive-icon-label> .glyph-icon {
+    -fx-fill: #C7AC32;
+}
+
+#list-link-icon-label> .glyph-icon {
+  -fx-fill: #585858;
+}
+
+#list-xml-icon-label> .glyph-icon {
+    -fx-fill: #00C0C0;
+}
+
+#list-audio-icon-label> .glyph-icon {
+    -fx-fill: #7CA8C0;
+}
+.filename-label{
+    -fx-font-size: 16px;
+}
+
+#path-label{
+    -fx-text-fill: #858585;
+}
+
+.crawl-location-pane {
+   -fx-padding: 6;
+   -fx-spacing: 10;
+   -fx-background-color: rgba(0,0,0,0.1);
+}
+
+.crawl-location-label{
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+}
+
+.image-button {
+    -fx-background-color: transparent;
+    -fx-padding: 2;
+}
+
+.crawl-button:disabled {
+    -fx-background-image: url("small-loader.gif");
+    -fx-background-repeat: no-repeat;
+    -fx-background-position:center;
+}
+
+.settings-title{
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+    -fx-text-fill: rgba(0,0,0,0.8);
+    -fx-padding: 2;
+}
+
+.empty-settings-label{
+    -fx-font-size: 16px;
+    -fx-text-fill: rgba(0,0,0,0.8);
+    -fx-font-style: italic;
+    -fx-padding: 6;
+}
+
+.left-right-bordered {
+    -fx-padding: 0 10 0 10;
+}
+
+.autocrawl-Settings{
+    -fx-background-color: #FFF0D9;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.5), 10, 0, 0, 0);
+}
+
+.crawl-item-list {
+    -fx-padding: 10 0 0 0;
+}
+
+.next-crawl {
+    -fx-font-weight: bold;
+}
+
+.settings-button {
+    -fx-font-size: 16px;
+}
+
+.settings-button > .glyph-icon {
+    -fx-fill: rgba(0,0,0,0.4);
+}
+
+.settings-button:hover > .glyph-icon{
+    -fx-fill: rgba(0,0,0,0.6);
+}
+
+.settings-button:pressed > .glyph-icon{
+    -fx-fill: rgba(0,0,0,0.6);
+}
+
+.back-button {
+    -fx-padding: 2;
+    -fx-font-size: 16px;
+}
+
+.back-button > .glyph-icon {
+    -fx-fill: rgba(0,0,0,0.4);
+}
+
+.back-button:hover > .glyph-icon{
+    -fx-fill: rgba(0,0,0,0.6);
+}
+
+.back-button:pressed > .glyph-icon{
+    -fx-fill: rgba(0,0,0,0.6);
+}
+
+.scroll-pane {
+     -fx-background-color: transparent;
+}
+
+.scroll-pane > .viewport {
+    -fx-background-color: transparent;
+}
+
+.scroll-pane > .corner {
+    -fx-background-color: transparent;
+    -fx-background-insets: 0 0 0 0;
+}
+
+.list-view{
+    -fx-accent: #D1F0FF;
+}
+
+.list-view > .virtual-flow > .corner {
+    -fx-background-color: transparent;
+}
+
+.scroll-bar:horizontal .track,
+.scroll-bar:vertical .track {
+	-fx-border-color: transparent;
+	-fx-background-radius: 0em;
+	-fx-border-radius: 2em;
+}
+
+.scroll-bar:horizontal .increment-button ,
+.scroll-bar:horizontal .decrement-button {
+    -fx-background-color: transparent;
+	-fx-background-radius: 0em;
+	-fx-padding: 0 0 10 0;
+}
+
+.scroll-bar:vertical .increment-button ,
+.scroll-bar:vertical .decrement-button {
+    -fx-background-color:transparent;
+	-fx-background-radius: 0em;
+	-fx-padding: 0 10 0 0;
+}
+
+.scroll-bar .increment-arrow,
+.scroll-bar .decrement-arrow {
+    -fx-shape: " ";
+	-fx-padding: 0;
+}
+
+.scroll-bar:horizontal .thumb,
+.scroll-bar:vertical .thumb {
+    -fx-background-color: #D4AB00;
+	-fx-background-insets: 2, 0, 0;
+	-fx-background-radius: 2em;
+}
+
+

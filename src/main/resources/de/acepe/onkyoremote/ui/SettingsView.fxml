@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.String?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.acepe.onkyoremote.ui.SettingsViewController">
+    <content>
+        <VBox styleClass="spaced">
+            <children>
+                <HBox>
+                    <children>
+                        <Button fx:id="backButton" mnemonicParsing="false" onAction="#onBackPerformed">
+                            <styleClass>
+                                <String fx:value="image-button" />
+                                <String fx:value="back-button" />
+                            </styleClass>
+                        </Button>
+                        <Label fx:id="settingsLabel" maxHeight="1.7976931348623157E308" styleClass="settings-title" text="Einstellungen" />
+                    </children>
+               <styleClass>
+                  <String fx:value="content-pane" />
+                  <String fx:value="bordered" />
+               </styleClass>
+                </HBox>
+            </children>
+        </VBox>
+    </content>
+</ScrollPane>
