@@ -4,7 +4,6 @@ import static de.csmp.jeiscp.eiscp.EiscpCommmandsConstants.*;
 import static java.util.stream.Collectors.toList;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Stream;
 
 import org.slf4j.Logger;
@@ -20,12 +19,17 @@ import javafx.beans.property.SimpleObjectProperty;
 public class Model implements EiscpListener {
     private static final Logger LOG = LoggerFactory.getLogger(Model.class);
 
-    private final List<Command> sources = Stream.of(new Command("Bluetooth", INPUT_SELECTOR_ISCP + "2E"),
-                                                    new Command("BD/DVD", INPUT_SELECTOR_ISCP + "10"),
-                                                    new Command("TV/CD", INPUT_SELECTOR_ISCP + "23"),
-                                                    new Command("NET", INPUT_SELECTOR_ISCP + "2B"),
-                                                    new Command("PC", INPUT_SELECTOR_ISCP + "05"),
-                                                    new Command("AUX", INPUT_SELECTOR_ISCP + "03"))
+    private final List<Command> sources = Stream.of(new Command("BD/DVD", INPUT_SELECTOR_DVD_ISCP),
+                                                    new Command("CBL/SAT", INPUT_SELECTOR_VIDEO2_ISCP),
+                                                    new Command("STB/DVR", INPUT_SELECTOR_VIDEO1_ISCP),
+                                                    new Command("GAME", INPUT_SELECTOR_VIDEO3_ISCP),
+                                                    new Command("PC", INPUT_SELECTOR_VIDEO6_ISCP),
+                                                    new Command("AUX", INPUT_SELECTOR_VIDEO4_ISCP),
+                                                    new Command("AM", INPUT_SELECTOR_AM_ISCP),
+                                                    new Command("FM", INPUT_SELECTOR_FM_ISCP),
+                                                    new Command("TV/CD", INPUT_SELECTOR_CD_ISCP),
+                                                    new Command("NET", INPUT_SELECTOR_NETWORK_ISCP),
+                                                    new Command("AM", INPUT_SELECTOR_USB_ISCP))
                                                 .collect(toList());
 
     private final ObjectProperty<Command> selectedSource = new SimpleObjectProperty<>();
@@ -78,11 +82,7 @@ public class Model implements EiscpListener {
         String parameter = message.substring(3);
 
         if (command.equals(INPUT_SELECTOR_ISCP)) {
-            // InputSelection
-            String input = parameter;
-
-            Optional<Command> foundSource = sources.stream().filter(c -> c.getCode().equals(message)).findFirst();
-            Platform.runLater(() -> selectedSourceProperty().setValue(foundSource.orElse(null)));
+            sources.stream().filter(c -> c.getCode().equals(message)).findFirst().ifPresent(this::setSource);
 
             // String currentInput = lastReceivedValues.get(INPUT_SELECTOR_ISCP);
             // if (INPUT_SELECTOR_NETWORK_ISCP.equals(INPUT_SELECTOR_ISCP + currentInput) ||
@@ -101,5 +101,9 @@ public class Model implements EiscpListener {
             // }
 
         }
+    }
+
+    private void setSource(Command command) {
+        Platform.runLater(() -> selectedSourceProperty().setValue(command));
     }
 }

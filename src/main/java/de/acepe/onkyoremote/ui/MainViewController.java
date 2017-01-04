@@ -22,7 +22,6 @@ public class MainViewController implements ControlledScreen {
     private final Settings settings;
     private final Model model;
 
-    private EiscpConnector conn = null;
     private ScreenManager screenManager;
 
     @FXML
