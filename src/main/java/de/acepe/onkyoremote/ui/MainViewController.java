@@ -81,23 +81,13 @@ public class MainViewController implements ControlledScreen {
         });
 
         DoubleProperty volumeCenterProperty = volumeSliderCenter.valueProperty();
-        volumeCenterProperty.addListener((observable, oldValue, newValue) -> {
-//            if (!volumeSliderCenter.isValueChanging()) {
-                model.setVolumeCenter((Double) newValue);
-//            }
-        });
-        model.volumeCenterProperty().addListener((observable, oldValue, newValue) -> {
-            volumeCenterProperty.setValue(newValue);
-        });
+        volumeCenterProperty.addListener((observable, oldValue, newValue) -> model.setVolumeCenter((Double) newValue));
+        model.volumeCenterProperty()
+             .addListener((observable, oldValue, newValue) -> volumeCenterProperty.setValue(newValue));
+
         DoubleProperty volumeSubProperty = volumeSliderSub.valueProperty();
-        volumeSubProperty.addListener((observable, oldValue, newValue) -> {
-            if (!volumeSliderSub.isValueChanging()) {
-                model.setVolumeSub((Double) newValue);
-            }
-        });
-        model.volumeSubProperty().addListener((observable, oldValue, newValue) -> {
-            volumeSubProperty.setValue(newValue);
-        });
+        volumeSubProperty.addListener((observable, oldValue, newValue) -> model.setVolumeSub((Double) newValue));
+        model.volumeSubProperty().addListener((observable, oldValue, newValue) -> volumeSubProperty.setValue(newValue));
 
         model.muteProperty().addListener(observable -> setIcon(muteButton, model.muteProperty().get()
                 ? FontAwesomeIcon.VOLUME_OFF
