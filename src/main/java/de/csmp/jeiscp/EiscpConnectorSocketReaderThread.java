@@ -51,6 +51,7 @@ public class EiscpConnectorSocketReaderThread implements Runnable {
 				}
 				
 				String iscpResult = EiscpProtocolHelper.parseIscpMessage(iscpMessage);
+				log.debug("receivedIscpCommand: " + iscpResult);
 				try {
 					fireReceivedIscpMessage(iscpResult);
 				} catch (Throwable ex) {

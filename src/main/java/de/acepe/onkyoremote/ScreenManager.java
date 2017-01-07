@@ -29,7 +29,7 @@ import javafx.stage.Window;
 import javafx.util.Duration;
 
 public class ScreenManager extends StackPane {
-    public static final String APP_TITLE = "Indexer";
+    public static final String APP_TITLE = "Onkyo Remote";
     public static final String APP_STYLE = ScreenManager.class.getResource("style.css").toExternalForm();
 
     private final Application application;

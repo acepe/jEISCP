@@ -13,8 +13,8 @@ import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 
-public class FileIndexApplication extends Application {
-    private static final Logger LOG = LoggerFactory.getLogger(FileIndexApplication.class);
+public class OnkyoRemote extends Application {
+    private static final Logger LOG = LoggerFactory.getLogger(OnkyoRemote.class);
 
     private ScreenManager screenManager;
 

@@ -13,13 +13,13 @@
             <children>
                 <HBox>
                     <children>
-                        <Button fx:id="backButton" mnemonicParsing="false" onAction="#onBackPerformed">
+                        <Button fx:id="backButton" mnemonicParsing="false" onAction="#onBackPerformed" text="&lt;">
                             <styleClass>
                                 <String fx:value="image-button" />
                                 <String fx:value="back-button" />
                             </styleClass>
                         </Button>
-                        <Label fx:id="settingsLabel" maxHeight="1.7976931348623157E308" styleClass="settings-title" text="Einstellungen" />
+                        <Label fx:id="settingsLabel" maxHeight="1.7976931348623157E308" styleClass="title" text="Einstellungen" />
                     </children>
                <styleClass>
                   <String fx:value="content-pane" />

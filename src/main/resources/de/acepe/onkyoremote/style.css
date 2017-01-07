@@ -1,6 +1,7 @@
 .root {
     -fx-background: white;
     -fx-background-color: white;
+    -slider-track-bg: #d0d0d0;
 }
 
 .spaced {
@@ -22,89 +23,28 @@
 
 .grid {
     -fx-hgap: 8;
-    -fx-vgap: 1;
+    -fx-vgap: 15;
 }
 
-.text-highlight{
-    -fx-background-color: #88A6E8;
+
+.progress-slider .track {
+    -fx-background-color:null;
 }
 
-#list-file-icon-label> .glyph-icon {
-    -fx-fill: rgba(0,0,0,0.4);
+.offset-slider .track {
+     -fx-background-color:
+              -fx-shadow-highlight-color,
+              linear-gradient(to bottom, derive(-fx-text-box-border, -10%), -fx-text-box-border),
+              -slider-track-bg;
 }
 
-#list-excel-icon-label> .glyph-icon {
-    -fx-fill: #00C000;
+.progress-bar .bar {
+    -fx-padding: 4px;
+    -fx-background-insets: 0;
 }
 
-#list-onenote-icon-label> .glyph-icon {
-    -fx-fill: #6F20A3;
-}
-
-#list-word-icon-label> .glyph-icon {
-    -fx-fill: #0000FF;
-}
-
-#list-text-icon-label> .glyph-icon {
-    -fx-fill: black;
-}
-
-#list-image-icon-label> .glyph-icon {
-    -fx-fill: #CD1BD3;
-}
-
-#list-video-icon-label> .glyph-icon {
-    -fx-fill: #08E11A;
-}
-
-#list-pdf-icon-label> .glyph-icon {
-    -fx-fill: #D30000;
-}
-
-#list-folder-icon-label> .glyph-icon {
-    -fx-fill: #FFD560;
-}
-
-#list-mail-icon-label> .glyph-icon {
-   -fx-fill: #FFDD41;
-}
-
-#list-powerpoint-icon-label> .glyph-icon {
-   -fx-fill: #DA3B01;
-}
-
-#list-archive-icon-label> .glyph-icon {
-    -fx-fill: #C7AC32;
-}
-
-#list-link-icon-label> .glyph-icon {
-  -fx-fill: #585858;
-}
-
-#list-xml-icon-label> .glyph-icon {
-    -fx-fill: #00C0C0;
-}
-
-#list-audio-icon-label> .glyph-icon {
-    -fx-fill: #7CA8C0;
-}
-.filename-label{
-    -fx-font-size: 16px;
-}
-
-#path-label{
-    -fx-text-fill: #858585;
-}
-
-.crawl-location-pane {
-   -fx-padding: 6;
-   -fx-spacing: 10;
-   -fx-background-color: rgba(0,0,0,0.1);
-}
-
-.crawl-location-label{
-    -fx-font-size: 16px;
-    -fx-font-weight: bold;
+.progress-bar .track {
+    -fx-background-color: linear-gradient(to bottom, derive(-slider-track-bg, -7%), derive(-slider-track-bg, 0%), derive(-slider-track-bg, -3%), derive(-slider-track-bg, -9%) );
 }
 
 .image-button {
@@ -112,57 +52,35 @@
     -fx-padding: 2;
 }
 
-.crawl-button:disabled {
-    -fx-background-image: url("small-loader.gif");
-    -fx-background-repeat: no-repeat;
-    -fx-background-position:center;
+.image-button > .glyph-icon {
+    -fx-fill: rgba(0,0,0,0.6);
 }
 
-.settings-title{
-    -fx-font-size: 20px;
-    -fx-font-weight: bold;
-    -fx-text-fill: rgba(0,0,0,0.8);
-    -fx-padding: 2;
+.image-button:hover > .glyph-icon{
+    -fx-fill: rgba(0,0,0,0.8);
 }
 
-.empty-settings-label{
-    -fx-font-size: 16px;
-    -fx-text-fill: rgba(0,0,0,0.8);
-    -fx-font-style: italic;
-    -fx-padding: 6;
+.image-button:pressed > .glyph-icon{
+    -fx-fill: rgba(0,0,0,0.8);
 }
 
 .left-right-bordered {
     -fx-padding: 0 10 0 10;
 }
 
-.autocrawl-Settings{
-    -fx-background-color: #FFF0D9;
-    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.5), 10, 0, 0, 0);
-}
-
-.crawl-item-list {
-    -fx-padding: 10 0 0 0;
-}
-
-.next-crawl {
-    -fx-font-weight: bold;
+.volume-button {
+    -fx-font-size: 14px;
 }
 
 .settings-button {
     -fx-font-size: 16px;
 }
 
-.settings-button > .glyph-icon {
-    -fx-fill: rgba(0,0,0,0.4);
-}
-
-.settings-button:hover > .glyph-icon{
-    -fx-fill: rgba(0,0,0,0.6);
-}
-
-.settings-button:pressed > .glyph-icon{
-    -fx-fill: rgba(0,0,0,0.6);
+.title{
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+    -fx-text-fill: rgba(0,0,0,0.8);
+    -fx-padding: 2 2 15 2;
 }
 
 .back-button {
@@ -193,14 +111,6 @@
 .scroll-pane > .corner {
     -fx-background-color: transparent;
     -fx-background-insets: 0 0 0 0;
-}
-
-.list-view{
-    -fx-accent: #D1F0FF;
-}
-
-.list-view > .virtual-flow > .corner {
-    -fx-background-color: transparent;
 }
 
 .scroll-bar:horizontal .track,

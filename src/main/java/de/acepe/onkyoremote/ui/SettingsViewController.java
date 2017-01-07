@@ -27,6 +27,7 @@ public class SettingsViewController implements ControlledScreen {
     private void initialize() {
         settings = Settings.getInstance();
         GlyphsDude.setIcon(backButton, FontAwesomeIcon.CHEVRON_LEFT, "1.5em");
+        backButton.setText("");
 
     }
 

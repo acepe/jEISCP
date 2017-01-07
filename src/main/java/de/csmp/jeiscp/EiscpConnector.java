@@ -79,23 +79,22 @@ public class EiscpConnector {
 		log.debug("answere from " + pct.getSocketAddress());
 		
 		String responseString = EiscpProtocolHelper.interpreteEiscpResponse(receivedMessage);
-		String address = pct.getAddress().getHostAddress().toString();
-		EiscpConnector conn = new EiscpConnector(address, responseString);
-		return conn;
+		String address = pct.getAddress().getHostAddress();
+		return new EiscpConnector(address, responseString);
 	}
 
 
-	public EiscpConnector(String address, String autodiscoverResponse) throws UnknownHostException, IOException {
+	public EiscpConnector(String address, String autodiscoverResponse) throws IOException {
 		// TODO parse
 		log.debug("autodiscovered: " + autodiscoverResponse);
 		init(address, DEFAULT_EISCP_PORT);
 	}
 	
-	public EiscpConnector(String address) throws UnknownHostException, IOException {
+	public EiscpConnector(String address) throws IOException {
 		init(address, DEFAULT_EISCP_PORT);
 	}
 	
-	public EiscpConnector(String address, int port) throws UnknownHostException, IOException {
+	public EiscpConnector(String address, int port) throws IOException {
 		init(address, port);
 	}
 	
@@ -113,7 +112,7 @@ public class EiscpConnector {
 		eiscpConnectorReaderThread.removeListener(listener);
 	}
 	
-	private void init(String address, int port) throws UnknownHostException, IOException {
+	private void init(String address, int port) throws IOException {
 		log.debug("connect to " + address + ":" + port);
 		
 		socket = new Socket(address, port);

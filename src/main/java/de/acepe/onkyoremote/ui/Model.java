@@ -1,6 +1,9 @@
 package de.acepe.onkyoremote.ui;
 
+import static de.csmp.jeiscp.EiscpProtocolHelper.convertToHexString;
 import static de.csmp.jeiscp.eiscp.EiscpCommmandsConstants.*;
+import static java.lang.Integer.toHexString;
+import static java.lang.Math.abs;
 import static java.util.stream.Collectors.toList;
 
 import java.util.List;
@@ -13,8 +16,9 @@ import de.acepe.onkyoremote.backend.Command;
 import de.csmp.jeiscp.EiscpConnector;
 import de.csmp.jeiscp.EiscpListener;
 import javafx.application.Platform;
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.*;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 
 public class Model implements EiscpListener {
     private static final Logger LOG = LoggerFactory.getLogger(Model.class);
@@ -33,11 +37,16 @@ public class Model implements EiscpListener {
                                                 .collect(toList());
 
     private final ObjectProperty<Command> selectedSource = new SimpleObjectProperty<>();
+    private final DoubleProperty volume = new SimpleDoubleProperty(0);
+    private final DoubleProperty volumeCenter = new SimpleDoubleProperty(0);
+    private final DoubleProperty volumeSub = new SimpleDoubleProperty(0);
+    private final BooleanProperty mute = new SimpleBooleanProperty(false);
 
     private EiscpConnector conn;
+    private ObservableList<String> sendCommands = FXCollections.observableArrayList();
 
     public Model() {
-        selectedSourceProperty().addListener(observable -> sendIscpCommand(selectedSource.get()));
+        selectedSource.addListener(observable -> sendIscpCommand(selectedSource.get()));
     }
 
     public void setConn(EiscpConnector conn) {
@@ -49,9 +58,48 @@ public class Model implements EiscpListener {
     private void init() {
         sendIscpCommand(SYSTEM_POWER_QUERY_ISCP);
         sendIscpCommand(MASTER_VOLUME_QUERY_ISCP);
+        sendIscpCommand(AUDIO_MUTING_QUERY_ISCP);
+        sendIscpCommand(CENTER_TEMPORARY_LEVEL_QUERY_ISCP);
+        sendIscpCommand(SUBWOOFER_TEMPORARY_LEVEL_QUERY_ISCP);
         sendIscpCommand(VIDEO_INFOMATION_QUERY_ISCP);
         sendIscpCommand(MONITOR_OUT_RESOLUTION_QUERY_ISCP);
         sendIscpCommand(INPUT_SELECTOR_QUERY_ISCP);
+        sendCommands.clear();
+    }
+
+    public void setVolume(double vol) {
+        if (vol == volume.get()) {
+            return;
+        }
+        volume.set(vol);
+        sendIscpCommand(MASTER_VOLUME_ISCP + convertToHexString((byte) vol));
+    }
+
+    public void setVolumeCenter(double centerVol) {
+        setOffsetVolume(centerVol, volumeCenter, "CTL");
+    }
+
+    public void setVolumeSub(double subVol) {
+        setOffsetVolume(subVol, volumeSub, "SWL");
+    }
+
+    private void setOffsetVolume(double vol, DoubleProperty property, String codePrefix) {
+        if (vol == property.get()) {
+            return;
+        }
+        property.set(vol);
+        if (vol == 0) {
+            sendIscpCommand(codePrefix + "00");
+        } else {
+            sendIscpCommand(codePrefix + (vol < 0 ? "-" : "+") + toHexString(abs((int) vol)).toUpperCase());
+        }
+    }
+
+    public void setMute() {
+        if (sendCommands.stream().anyMatch(s -> s.startsWith(AUDIO_MUTING_ISCP))) {
+            return;
+        }
+        sendIscpCommand(AUDIO_MUTING_TOGGLE_ISCP);
     }
 
     public ObjectProperty<Command> selectedSourceProperty() {
@@ -65,6 +113,7 @@ public class Model implements EiscpListener {
     private void sendIscpCommand(String cmd) {
         try {
             conn.sendIscpCommand(cmd);
+            sendCommands.add(cmd);
         } catch (Exception ex) {
             LOG.error(ex.getMessage(), ex);
         }
@@ -76,34 +125,70 @@ public class Model implements EiscpListener {
 
     @Override
     public void receivedIscpMessage(String message) {
-        LOG.info("Received: " + message);
-
+        if (sendCommands.contains(message)) {
+            sendCommands.remove(message);
+            return;
+        }
         String command = message.substring(0, 3);
         String parameter = message.substring(3);
 
-        if (command.equals(INPUT_SELECTOR_ISCP)) {
-            sources.stream().filter(c -> c.getCode().equals(message)).findFirst().ifPresent(this::setSource);
+        Platform.runLater(() -> {
+            switch (command) {
+                case INPUT_SELECTOR_ISCP:
+                    sources.stream()
+                           .filter(c -> c.getCode().equals(message))
+                           .findFirst()
+                           .ifPresent(c -> setinUI(selectedSource, c));
+                    break;
+                case MASTER_VOLUME_ISCP:
+                    int volumeValue = Integer.parseInt(parameter, 16);
+                    volume.setValue(volumeValue);
+                    break;
+                case SUBWOOFER_TEMPORARY_LEVEL_ISCP:
+                    setOffsetVolume(parameter, volumeSub);
+                    break;
+                case CENTER_TEMPORARY_LEVEL_ISCP:
+                    setOffsetVolume(parameter, volumeCenter);
+                    break;
+                case AUDIO_MUTING_ISCP:
+                    setinUI(mute, parameter.equals("01"));
+                    sendCommands.remove(AUDIO_MUTING_TOGGLE_ISCP);
+                    break;
+            }
+        });
+    }
 
-            // String currentInput = lastReceivedValues.get(INPUT_SELECTOR_ISCP);
-            // if (INPUT_SELECTOR_NETWORK_ISCP.equals(INPUT_SELECTOR_ISCP + currentInput) ||
-            // "2E".equals(currentInput)) {
-            // try {
-            // if (! lastReceivedValues.containsKey(NET_USB_ARTIST_NAME_INFO_ISCP)) {
-            // conn.sendIscpCommand(NET_USB_ARTIST_NAME_INFO_QUERY_ISCP);
-            // }
-            //
-            // if (! lastReceivedValues.containsKey(NET_USB_TITLE_NAME_ISCP)) {
-            // conn.sendIscpCommand(NET_USB_TITLE_NAME_QUERY_ISCP);
-            // }
-            // } catch (Exception ex) {
-            // log.error(ex.getMessage(), ex);
-            // }
-            // }
-
+    private void setOffsetVolume(String parameter, DoubleProperty offsetProperty) {
+        if (parameter.equals("00")) {
+            offsetProperty.setValue(0);
+        } else {
+            String sign = parameter.substring(0, 1);
+            int value = Integer.decode("0x" + parameter.substring(1));
+            if (sign.equals("-")) {
+                value *= -1;
+            }
+            offsetProperty.setValue(value);
         }
     }
 
-    private void setSource(Command command) {
-        Platform.runLater(() -> selectedSourceProperty().setValue(command));
+    private <T> void setinUI(Property<T> property, T value) {
+        Platform.runLater(() -> property.setValue(value));
     }
+
+    public DoubleProperty volumeProperty() {
+        return volume;
+    }
+
+    public DoubleProperty volumeCenterProperty() {
+        return volumeCenter;
+    }
+
+    public DoubleProperty volumeSubProperty() {
+        return volumeSub;
+    }
+
+    public BooleanProperty muteProperty() {
+        return mute;
+    }
+
 }
