@@ -6,13 +6,16 @@ import static java.lang.Integer.toHexString;
 import static java.lang.Math.abs;
 import static java.util.stream.Collectors.toList;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.stream.Stream;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.acepe.onkyoremote.backend.Command;
+import de.acepe.onkyoremote.backend.Settings;
 import de.csmp.jeiscp.EiscpConnector;
 import de.csmp.jeiscp.EiscpListener;
 import javafx.application.Platform;
@@ -20,8 +23,9 @@ import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
-public class Model implements EiscpListener {
-    private static final Logger LOG = LoggerFactory.getLogger(Model.class);
+public class ReceiverConnector implements EiscpListener {
+    private static final Logger LOG = LoggerFactory.getLogger(ReceiverConnector.class);
+    private static ReceiverConnector instance;
 
     private final List<Command> sources = Stream.of(new Command("BD/DVD", INPUT_SELECTOR_DVD_ISCP),
                                                     new Command("CBL/SAT", INPUT_SELECTOR_VIDEO2_ISCP),
@@ -36,23 +40,61 @@ public class Model implements EiscpListener {
                                                     new Command("AM", INPUT_SELECTOR_USB_ISCP))
                                                 .collect(toList());
 
+    private final ObjectProperty<EiscpConnector> connection = new SimpleObjectProperty<>();
     private final ObjectProperty<Command> selectedSource = new SimpleObjectProperty<>();
     private final DoubleProperty volume = new SimpleDoubleProperty(0);
     private final DoubleProperty volumeCenter = new SimpleDoubleProperty(0);
     private final DoubleProperty volumeSub = new SimpleDoubleProperty(0);
     private final BooleanProperty mute = new SimpleBooleanProperty(false);
+    private final BooleanProperty connected = new SimpleBooleanProperty(false);
+    private final Settings settings;
 
-    private EiscpConnector conn;
     private ObservableList<String> sendCommands = FXCollections.observableArrayList();
 
-    public Model() {
+    public static ReceiverConnector getInstance() {
+        if (instance == null) {
+            instance = new ReceiverConnector();
+        }
+        return instance;
+    }
+
+    private ReceiverConnector() {
+        settings = Settings.getInstance();
         selectedSource.addListener(observable -> sendIscpCommand(selectedSource.get()));
     }
 
-    public void setConn(EiscpConnector conn) {
-        this.conn = conn;
-        conn.addListener(this);
-        init();
+    public void connectToReceiver() {
+        String address = settings.getReceiverIp();
+        if (!StringUtils.isEmpty(address)) {
+            try {
+                setConnection(new EiscpConnector(address));
+                connected.setValue(true);
+            } catch (IOException e) {
+                setConnection(null);
+                connected.setValue(false);
+                clear();
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private void clear() {
+        selectedSource.setValue(null);
+        volumeCenter.setValue(null);
+        volume.setValue(null);
+        volumeSub.setValue(null);
+    }
+
+    private void setConnection(EiscpConnector conn) {
+        EiscpConnector old = connection.getValue();
+        if (old != null) {
+            old.removeListener(this);
+        }
+        connection.setValue(conn);
+        if (conn != null) {
+            conn.addListener(this);
+            init();
+        }
     }
 
     private void init() {
@@ -112,7 +154,7 @@ public class Model implements EiscpListener {
 
     private void sendIscpCommand(String cmd) {
         try {
-            conn.sendIscpCommand(cmd);
+            connection.get().sendIscpCommand(cmd);
             sendCommands.add(cmd);
         } catch (Exception ex) {
             LOG.error(ex.getMessage(), ex);
@@ -191,4 +233,11 @@ public class Model implements EiscpListener {
         return mute;
     }
 
+    public boolean isConnected() {
+        return connected.get();
+    }
+
+    public BooleanProperty connectedProperty() {
+        return connected;
+    }
 }

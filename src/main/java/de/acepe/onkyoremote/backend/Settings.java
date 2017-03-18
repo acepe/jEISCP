@@ -2,6 +2,7 @@ package de.acepe.onkyoremote.backend;
 
 import java.io.*;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -9,6 +10,8 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import de.acepe.onkyoremote.backend.data.StoredSettings;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 
 public class Settings {
     private static final Logger LOG = LoggerFactory.getLogger(Settings.class);
@@ -17,10 +20,13 @@ public class Settings {
 
     private static Settings instance;
 
+    private final StringProperty receiverIp = new SimpleStringProperty();
+
     private StoredSettings storedSettings;
 
     private Settings() {
         storedSettings = loadSettings();
+        receiverIp.setValue(StringUtils.stripToEmpty(storedSettings.getReceiverIp()));
     }
 
     public static Settings getInstance() {
@@ -66,7 +72,8 @@ public class Settings {
     }
 
     private void snycToSettings() {
-        // storedSettings.setAutocrawlEnabled(autoCrawlEnabled.get());
+        String receiverIp = StringUtils.stripToEmpty(this.receiverIp.get());
+        storedSettings.setReceiverIp(receiverIp);
     }
 
     private void createAppDir() {
@@ -88,8 +95,12 @@ public class Settings {
         return System.getProperty("user.home") + File.separator + APP_DIR;
     }
 
-    public StoredSettings getStoredSettings() {
-        return storedSettings;
+    public String getReceiverIp() {
+        return receiverIp.get();
+    }
+
+    public StringProperty receiverIpProperty() {
+        return receiverIp;
     }
 
 }

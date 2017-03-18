@@ -100,6 +100,15 @@
     -fx-fill: rgba(0,0,0,0.6);
 }
 
+#connection-status-ok > .glyph-icon {
+    -fx-fill: #27731F;
+}
+
+#connection-status-nok > .glyph-icon {
+    -fx-fill: #D90D32;
+}
+
+
 .scroll-pane {
      -fx-background-color: transparent;
 }
@@ -142,7 +151,6 @@
 
 .scroll-bar:horizontal .thumb,
 .scroll-bar:vertical .thumb {
-    -fx-background-color: #D4AB00;
 	-fx-background-insets: 2, 0, 0;
 	-fx-background-radius: 2em;
 }

@@ -1,12 +1,9 @@
 package de.acepe.onkyoremote;
 
-import java.io.IOException;
-
+import de.acepe.onkyoremote.ui.ReceiverConnector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.acepe.onkyoremote.ui.MainViewController;
-import de.csmp.jeiscp.EiscpConnector;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.scene.Scene;
@@ -47,12 +44,7 @@ public class OnkyoRemote extends Application {
             Platform.exit();
         }));
 
-        try {
-            EiscpConnector conn = new EiscpConnector("192.168.1.118");
-            ((MainViewController) screenManager.getController(Screens.MAIN_VIEW)).setConn(conn);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        ReceiverConnector.getInstance().connectToReceiver();
     }
 
     @Override

@@ -14,19 +14,17 @@ import de.acepe.onkyoremote.ControlledScreen;
 import de.acepe.onkyoremote.ScreenManager;
 import de.acepe.onkyoremote.Screens;
 import de.acepe.onkyoremote.backend.Command;
-import de.acepe.onkyoremote.backend.Settings;
 import de.acepe.onkyoremote.util.ToStringConverter;
-import de.csmp.jeiscp.EiscpConnector;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
 import javafx.beans.property.DoubleProperty;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.control.*;
 
 public class MainViewController implements ControlledScreen {
     private static final Logger LOG = LoggerFactory.getLogger(MainViewController.class);
 
-    private final Settings settings;
-    private final Model model;
+    private final ReceiverConnector receiverConnector;
 
     private ScreenManager screenManager;
 
@@ -52,8 +50,7 @@ public class MainViewController implements ControlledScreen {
     private Label volumeLabelSub;
 
     public MainViewController() {
-        settings = Settings.getInstance();
-        model = new Model();
+        receiverConnector = ReceiverConnector.getInstance();
     }
 
     @FXML
@@ -63,35 +60,46 @@ public class MainViewController implements ControlledScreen {
         settingsButton.setText("");
         muteButton.setText("");
 
-        sourceComboBox.getItems().addAll(model.getSources());
-        sourceComboBox.valueProperty().bindBidirectional(model.selectedSourceProperty());
+        sourceComboBox.getItems().addAll(receiverConnector.getSources());
+        sourceComboBox.valueProperty().bindBidirectional(receiverConnector.selectedSourceProperty());
         sourceComboBox.setConverter(new ToStringConverter<>(Command::getDisplayKey));
 
-        volumeLabel.textProperty().bind(format("%.0f%%", model.volumeProperty()));
-        volumeLabelCenter.textProperty().bind(format("%.0f", model.volumeCenterProperty()));
-        volumeLabelSub.textProperty().bind(format("%.0f", model.volumeSubProperty()));
+        volumeLabel.textProperty().bind(format("%.0f%%", receiverConnector.volumeProperty()));
+        volumeLabelCenter.textProperty().bind(format("%.0f", receiverConnector.volumeCenterProperty()));
+        volumeLabelSub.textProperty().bind(format("%.0f", receiverConnector.volumeSubProperty()));
 
         installScrollListener(volumeSlider, volumeSliderCenter, volumeSliderSub);
+        installEnabledOnConnectedListener(sourceComboBox, volumeSlider, volumeSliderCenter, volumeSliderSub);
 
         DoubleProperty volumeProperty = volumeSlider.valueProperty();
-        volumeProperty.addListener((observable, oldValue, newValue) -> model.setVolume((Double) newValue));
-        model.volumeProperty().addListener((observable, oldValue, newValue) -> {
+        volumeProperty.addListener((observable, oldValue, newValue) -> receiverConnector.setVolume((Double) newValue));
+        receiverConnector.volumeProperty().addListener((observable, oldValue, newValue) -> {
             volumeProperty.setValue(newValue);
             sliderProgress.setProgress(newValue.doubleValue() / 100);
         });
 
         DoubleProperty volumeCenterProperty = volumeSliderCenter.valueProperty();
-        volumeCenterProperty.addListener((observable, oldValue, newValue) -> model.setVolumeCenter((Double) newValue));
-        model.volumeCenterProperty()
-             .addListener((observable, oldValue, newValue) -> volumeCenterProperty.setValue(newValue));
+        volumeCenterProperty.addListener((observable,
+                                          oldValue,
+                                          newValue) -> receiverConnector.setVolumeCenter((Double) newValue));
+        receiverConnector.volumeCenterProperty()
+                         .addListener((observable, oldValue, newValue) -> volumeCenterProperty.setValue(newValue));
 
         DoubleProperty volumeSubProperty = volumeSliderSub.valueProperty();
-        volumeSubProperty.addListener((observable, oldValue, newValue) -> model.setVolumeSub((Double) newValue));
-        model.volumeSubProperty().addListener((observable, oldValue, newValue) -> volumeSubProperty.setValue(newValue));
+        volumeSubProperty.addListener((observable,
+                                       oldValue,
+                                       newValue) -> receiverConnector.setVolumeSub((Double) newValue));
+        receiverConnector.volumeSubProperty()
+                         .addListener((observable, oldValue, newValue) -> volumeSubProperty.setValue(newValue));
 
-        model.muteProperty().addListener(observable -> setIcon(muteButton, model.muteProperty().get()
-                ? FontAwesomeIcon.VOLUME_OFF
-                : FontAwesomeIcon.VOLUME_UP, "1.5em"));
+        receiverConnector.muteProperty()
+                         .addListener(observable -> setIcon(muteButton, receiverConnector.muteProperty().get()
+                                 ? FontAwesomeIcon.VOLUME_OFF
+                                 : FontAwesomeIcon.VOLUME_UP, "1.5em"));
+    }
+
+    private void installEnabledOnConnectedListener(Node... nodes) {
+        Stream.of(nodes).forEach(n -> n.disableProperty().bind(receiverConnector.connectedProperty().not()));
     }
 
     private void installScrollListener(Slider... sliders) {
@@ -101,7 +109,7 @@ public class MainViewController implements ControlledScreen {
 
     @FXML
     void onMutePerformed() {
-        model.setMute();
+        receiverConnector.setMute();
     }
 
     @FXML
@@ -112,10 +120,6 @@ public class MainViewController implements ControlledScreen {
     @Override
     public void setScreenManager(ScreenManager screenManager) {
         this.screenManager = screenManager;
-    }
-
-    public void setConn(EiscpConnector conn) {
-        this.model.setConn(conn);
     }
 
 }
