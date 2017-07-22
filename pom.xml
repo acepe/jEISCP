@@ -59,6 +59,7 @@
             <plugin>
                 <artifactId>maven-assembly-plugin</artifactId>
                 <configuration>
+                    <finalName>OnkyoRemote</finalName>
                     <archive>
                         <manifest>
                             <mainClass>de.acepe.onkyoremote.OnkyoRemote</mainClass>
@@ -67,6 +68,7 @@
                     <descriptorRefs>
                         <descriptorRef>jar-with-dependencies</descriptorRef>
                     </descriptorRefs>
+                    <appendAssemblyId>false</appendAssemblyId>
                 </configuration>
                 <executions>
                     <execution>

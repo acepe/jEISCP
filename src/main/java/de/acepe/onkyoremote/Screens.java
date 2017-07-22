@@ -1,7 +1,7 @@
 package de.acepe.onkyoremote;
 
 public enum Screens {
-    MAIN_VIEW("ui/MainView.fxml", "Remote", 600, 270), SETTINGS("ui/SettingsView.fxml", "Einstellungen", 600, 270);
+    MAIN_VIEW("ui/MainView.fxml", "Remote", 680, 370), SETTINGS("ui/SettingsView.fxml", "Einstellungen", 600, 270);
 
     private final String resource;
     private final String title;

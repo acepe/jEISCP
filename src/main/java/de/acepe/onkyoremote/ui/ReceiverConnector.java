@@ -47,6 +47,7 @@ public class ReceiverConnector implements EiscpListener {
     private final DoubleProperty volumeSub = new SimpleDoubleProperty(0);
     private final BooleanProperty mute = new SimpleBooleanProperty(false);
     private final BooleanProperty connected = new SimpleBooleanProperty(false);
+    private final StringProperty listeningMode = new SimpleStringProperty();
     private final Settings settings;
 
     private ObservableList<String> sendCommands = FXCollections.observableArrayList();
@@ -104,6 +105,7 @@ public class ReceiverConnector implements EiscpListener {
         sendIscpCommand(CENTER_TEMPORARY_LEVEL_QUERY_ISCP);
         sendIscpCommand(SUBWOOFER_TEMPORARY_LEVEL_QUERY_ISCP);
         sendIscpCommand(VIDEO_INFOMATION_QUERY_ISCP);
+        sendIscpCommand(AUDIO_INFOMATION_QUERY_ISCP);
         sendIscpCommand(MONITOR_OUT_RESOLUTION_QUERY_ISCP);
         sendIscpCommand(INPUT_SELECTOR_QUERY_ISCP);
         sendCommands.clear();
@@ -144,15 +146,11 @@ public class ReceiverConnector implements EiscpListener {
         sendIscpCommand(AUDIO_MUTING_TOGGLE_ISCP);
     }
 
-    public ObjectProperty<Command> selectedSourceProperty() {
-        return selectedSource;
-    }
-
     private void sendIscpCommand(Command command) {
         sendIscpCommand(command.getCode());
     }
 
-    private void sendIscpCommand(String cmd) {
+    public void sendIscpCommand(String cmd) {
         try {
             connection.get().sendIscpCommand(cmd);
             sendCommands.add(cmd);
@@ -196,6 +194,11 @@ public class ReceiverConnector implements EiscpListener {
                     setinUI(mute, parameter.equals("01"));
                     sendCommands.remove(AUDIO_MUTING_TOGGLE_ISCP);
                     break;
+                case AUDIO_INFOMATION_ISCP:
+                    String[] split = parameter.split(",");
+                    if (split.length == 6) {
+                        setinUI(listeningMode, split[4]);
+                    }
             }
         });
     }
@@ -204,17 +207,23 @@ public class ReceiverConnector implements EiscpListener {
         if (parameter.equals("00")) {
             offsetProperty.setValue(0);
         } else {
-            String sign = parameter.substring(0, 1);
-            int value = Integer.decode("0x" + parameter.substring(1));
-            if (sign.equals("-")) {
-                value *= -1;
+            if (!parameter.equals("N/A")) {
+                String sign = parameter.substring(0, 1);
+                int value = Integer.decode("0x" + parameter.substring(1));
+                if (sign.equals("-")) {
+                    value *= -1;
+                }
+                offsetProperty.setValue(value);
             }
-            offsetProperty.setValue(value);
         }
     }
 
     private <T> void setinUI(Property<T> property, T value) {
         Platform.runLater(() -> property.setValue(value));
+    }
+
+    public ObjectProperty<Command> selectedSourceProperty() {
+        return selectedSource;
     }
 
     public DoubleProperty volumeProperty() {
@@ -239,5 +248,9 @@ public class ReceiverConnector implements EiscpListener {
 
     public BooleanProperty connectedProperty() {
         return connected;
+    }
+
+    public StringProperty listeningModeProperty() {
+        return listeningMode;
     }
 }

@@ -1,5 +1,6 @@
 package de.acepe.onkyoremote.ui;
 
+import static de.csmp.jeiscp.eiscp.EiscpCommmandsConstants.*;
 import static de.jensd.fx.glyphs.GlyphsDude.setIcon;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
@@ -38,6 +39,8 @@ public class MainViewController implements ControlledScreen {
     private Button muteButton;
     @FXML
     private Label volumeLabel;
+    @FXML
+    private Label listeningModeLabel;
     @FXML
     private ProgressBar sliderProgress;
     @FXML
@@ -96,6 +99,8 @@ public class MainViewController implements ControlledScreen {
                          .addListener(observable -> setIcon(muteButton, receiverConnector.muteProperty().get()
                                  ? FontAwesomeIcon.VOLUME_OFF
                                  : FontAwesomeIcon.VOLUME_UP, "1.5em"));
+
+        listeningModeLabel.textProperty().bindBidirectional(receiverConnector.listeningModeProperty());
     }
 
     private void installEnabledOnConnectedListener(Node... nodes) {
@@ -116,6 +121,71 @@ public class MainViewController implements ControlledScreen {
     void onSettingsPerformed() {
         screenManager.setScreen(Screens.SETTINGS, ScreenManager.Direction.LEFT);
     }
+
+    @FXML
+    void onStereoPerformed() {
+        receiverConnector.sendIscpCommand(LISTENING_MODE_STEREO_ISCP);
+    }
+
+    @FXML
+    void onDirectPerformed() {
+        receiverConnector.sendIscpCommand(LISTENING_MODE_DIRECT_ISCP);
+    }
+
+    @FXML
+    void onPureAudioPerformed() {
+        receiverConnector.sendIscpCommand(LISTENING_MODE_PURE_AUDIO_ISCP);
+    }
+
+    @FXML
+    void onAllChannelStereoPerformed() {
+        receiverConnector.sendIscpCommand(LISTENING_MODE_ALL_CH_STEREO_ISCP);
+    }
+
+    @FXML
+    void onFullMonoPerformed() {
+        receiverConnector.sendIscpCommand(LISTENING_MODE_FULL_MONO_ISCP);
+    }
+
+    @FXML
+    void onMultiChannelPerformed() {
+        receiverConnector.sendIscpCommand(LISTENING_MODE_STRAIGHT_DECODE_ISCP);
+    }
+
+    @FXML
+    void onThxCinemaPerformed() {
+        receiverConnector.sendIscpCommand(LISTENING_MODE_THX_CINEMA_ISCP);
+    }
+
+    @FXML
+    void onThxGamesPerformed() {
+        receiverConnector.sendIscpCommand(LISTENING_MODE_THX_GAMES_ISCP);
+    }
+
+    @FXML
+    void onThxMusicPerformed() {
+        receiverConnector.sendIscpCommand(LISTENING_MODE_THX_MUSIC_ISCP);
+    }
+
+    @FXML
+    void onGameRockPerformed() {
+        receiverConnector.sendIscpCommand(LISTENING_MODE_THX_MUSIC_ISCP);
+    }
+
+    @FXML
+    void onGameSportsPerformed() {
+        receiverConnector.sendIscpCommand(LISTENING_MODE_MUSICAL_ISCP);
+    }
+
+    @FXML
+    void onTheaterDimensionalPerformed() {
+        receiverConnector.sendIscpCommand(LISTENING_MODE_THEATER_DIMENSIONAL_ISCP);
+    }
+    @FXML
+    void onTvLogicPerformed() {
+        receiverConnector.sendIscpCommand(LISTENING_MODE_TV_LOGIC_ISCP);
+    }
+
 
     @Override
     public void setScreenManager(ScreenManager screenManager) {
